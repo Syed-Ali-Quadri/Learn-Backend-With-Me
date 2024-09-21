@@ -1,9 +1,27 @@
 import connectDB from "./db/index.js";
+import app from "./app.js";
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: "./.env",
+});
+
+const port = process.env.PORT || 8000;
 
 // Second thing you can do is that you can write connection db code in another file and you can import.
 
-connectDB();
-
+connectDB()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server is running on port ${process.env.PORT}`);
+    });
+    app.on("error", () => {
+      console.error("Error: ", error);
+    });
+  })
+  .catch((error) => {
+    console.log("MongoDB Connection Failed: ", error);
+  });
 
 // There are 2 ways to configure mongoDB.
 // 1. Configure mongo db with the following configuration below.

@@ -1,7 +1,8 @@
 {
     "singleQuote": false,
     "bracketSpacing": true,
-    "tabWidth": 2,
+    "prettier.tabWidth": 4,
+    "prettier.useTabs": true,
     "trailingComma": "es5",
     "semi": true
 }
