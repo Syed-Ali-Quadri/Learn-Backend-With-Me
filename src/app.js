@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import { CONFIG_EXPRESS_LIMIT } from "./constants";
+import { CONFIG_EXPRESS_LIMIT } from "./constants.js";
 
 const app = express();
 
@@ -21,5 +21,12 @@ app.use(express.json({ limit: CONFIG_EXPRESS_LIMIT }));
 app.use(express.urlencoded({ extended: true, limit: CONFIG_EXPRESS_LIMIT }));
 app.use(express.static("public"));
 app.use(cookieParser());
+
+// Import routes
+import userRouter from "./routes/user.routes.js"
+
+// Routers Decleration
+app.use("/api/v1/users", userRouter)
+
 
 export { app };

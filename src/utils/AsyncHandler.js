@@ -21,7 +21,7 @@ export { asyncHandler };
 
 // 2) Promise method:
 const asyncHandler = (requesthandler) => {
-  (req, res, next) => {
+  return (req, res, next) => {
     Promise.resolve(requesthandler(req, res, next)).catch((err) => next(err));
   };
 };
