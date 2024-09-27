@@ -7,6 +7,8 @@ class ApiResponse {
     }
 }
 
+export { ApiResponse }
+
 
 // Here is the example and output (If the response went success, and statusCode is below 400).
 

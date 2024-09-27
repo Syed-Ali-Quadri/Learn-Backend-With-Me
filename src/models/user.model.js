@@ -31,6 +31,7 @@ const userSchema = new Schema(
     },
     avatar: {
       type: String, // cloudnary url
+      default: "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
     },
     coverImage: {
       type: String, // cloudnary url
@@ -48,13 +49,13 @@ const userSchema = new Schema(
       ref: "Video",
     },
   },
-  { timestambs: true }
+  { timestamps: true }
 );
 
 // Using Middleware: Making password crypted
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next(); // If anything is changed or updated except the password then do nothing...
-  this.password = bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
@@ -92,4 +93,4 @@ userSchema.methods.generateRefreshToken = async function () {
   );
 };
 
-module.exports = mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);
