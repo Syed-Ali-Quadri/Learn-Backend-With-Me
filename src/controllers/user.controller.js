@@ -1,9 +1,11 @@
+// Imports the modules.
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
+// Register new user. This function is wrapped with asyncHandler to handle any potential errors.
 const registerUser = asyncHandler(async (req, res) => {
   // Getting user information from frontend.
   const { username, email, fullName, password } = req.body;
@@ -15,10 +17,18 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All the fields must be required.");
   }
 
+  // No "@" found, email is invalid
   const atIndex = email.indexOf("@");
+  
   if (atIndex === -1) {
-    // No "@" found, email is invalid
-    console.log('Invalid email: No "@" found.');
+    console.log('Invalid email');
+    return false;
+  }
+  // Checking if the user email is valid.
+  const atIndex1 = email.indexOf(".");
+
+  if (atIndex1 === -1) {
+    console.log('Invalid email');
     return false;
   }
 
@@ -40,8 +50,8 @@ const registerUser = asyncHandler(async (req, res) => {
   const coverImage = await uploadOnCloudinary(coverImageLocalPath); // Upload the coverImage to the cloudinary.
 
   // If there is any error while uploading, return null.
-  if (!avatar) return null;
-  if (!coverImage) return null;
+  if (!avatar) return "";
+  if (!coverImage) return "";
 
   // Create a new user in the database.
   const user = await User.create({
