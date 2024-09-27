@@ -28,8 +28,20 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!isMatch) throw new ApiError(400, "User not found.");
     console.log("Success");
 
-    return res.status(200).json(new ApiResponse(200, "User successfully logged in."));
+    return res.status(200).json(new ApiResponse(200, isMatch , "User successfully logged in."));
 });
 
 // Exporting the loginUser function
 export { loginUser };
+
+
+
+/*
+const loginUser = async (req, res, next) => {
+    try {
+        // Your async logic...
+    } catch (err) {
+        next(err); // Manually pass the error to the next middleware
+    }
+};
+*/
