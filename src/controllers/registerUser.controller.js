@@ -21,15 +21,13 @@ const registerUser = asyncHandler(async (req, res) => {
   const atIndex = email.indexOf("@");
   
   if (atIndex === -1) {
-    console.log('Invalid email');
-    return false;
+    throw new ApiError(400, "Invalid email.")
   }
   // Checking if the user email is valid.
   const atIndex1 = email.indexOf(".");
 
   if (atIndex1 === -1) {
-    console.log('Invalid email');
-    return false;
+    throw new ApiError(400, "Invalid email.")
   }
 
   // Check if the email, username is already used.
@@ -38,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (existedUser) {
-    throw new ApiError(409, "Username or email already existed.");
+    throw new ApiError(404, "Username or email already existed.");
   }
 
   // Check in the images (avatar and imageCover), and both images are optional.

@@ -9,4 +9,4 @@ const loginLimit = rateLimit({
   },
 });
 
-export { loginLimit };
+export default loginLimit;
