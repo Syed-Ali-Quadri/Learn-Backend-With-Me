@@ -1,12 +1,12 @@
-// importing stuffs/liberaries
+// importing libraries
 import { v2 as cloudinary } from "cloudinary";
-import dotenv from "dotenv";
 import fs from "fs";
+import dotenv from "dotenv";
 
 // Initialize environment variables
 dotenv.config({ path: "./.env" });
 
-// Configuration of cloudinary
+// Configuration of Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_CLOUD_API_KEY,
@@ -16,22 +16,27 @@ cloudinary.config({
 // Upload an image
 const uploadOnCloudinary = async (localPathFile) => {
   try {
-    if (!localPathFile) return null; // If there is no file in the localPathFile then return null.
+    if (!localPathFile) return null; // If there is no file in localPathFile then return null.
 
-    // If there is file in localPathFile then, upload the file to Cloudinary using Cloudinary's "uploader.upload" method.
+    // Upload the file to Cloudinary
     const response = await cloudinary.uploader.upload(localPathFile, {
       resource_type: "auto",
     });
 
-    // Log the URL of the uploaded file.
-    console.log("Your file has been uploaded successfully: ", response.url);
-
-    // Return the URL of the uploaded file.
+    // Unlinking the file after a successful upload.
+    fs.unlinkSync(localPathFile); // Delete the locally saved temporary file after successful upload
+    
+    // Return the response from Cloudinary (including the URL).
     return response;
 
   } catch (error) {
-    fs.unlinkSync(localPathFile); // Delete the locally saved temporary file as the upload operation failed.
-    console.log(error);
+    // Check if the file exists before attempting to delete it
+    if (fs.existsSync(localPathFile)) {
+      fs.unlinkSync(localPathFile); // Delete the locally saved temporary file if it exists
+    }
+
+    // Log the error for debugging purposes
+    console.error("Cloudinary upload failed: ", error);
   }
 };
 

@@ -2,7 +2,7 @@ import multer from "multer"
 
 const storage = multer.diskStorage({    // storage objects in disk storage.
     destination: function (req, file, cb) {
-      cb(null, "./public/temp") // Alloting temp file path.
+      cb(null, "./public/temp/") // Alloting temp file path.
     },
     filename: function (req, file, cb) {
         // Using uniqueSuffix variable makes sure that the filename is unique.
@@ -11,4 +11,4 @@ const storage = multer.diskStorage({    // storage objects in disk storage.
     }
   })
   
-  export default upload = multer({ storage: storage })
+  export const upload = multer({ storage: storage })

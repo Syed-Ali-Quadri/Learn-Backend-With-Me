@@ -1,5 +1,5 @@
-import { asyncHandler } from "../utils/asyncHandler";
-import { User } from "../models/user.model";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { User } from "../models/user.model.js";
 
 // Logout user. This function is wrapped with asyncHandler to handle any potential errors.
 const logoutUser = asyncHandler(async (req, res) => {

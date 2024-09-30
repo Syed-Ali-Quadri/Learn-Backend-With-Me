@@ -13,10 +13,11 @@ dotenv.config({
 // Configure express
 app.use(
   cors({
-    origin: "process.env.CORS_ORIGIN",
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   })
 );
+
 app.use(express.json({ limit: CONFIG_EXPRESS_LIMIT }));
 app.use(express.urlencoded({ extended: true, limit: CONFIG_EXPRESS_LIMIT }));
 app.use(express.static("public"));
@@ -24,8 +25,8 @@ app.use(cookieParser());
 
 // Import routes
 import registerUser from "./routes/registerUser.routes.js"
-import loginUser from "./routes/loginUser.routes.js";
-import logoutUser from "./routes/logoutUser.routes.js"
+import { loginUser } from "./controllers/loginUser.controller.js";
+import { logoutUser } from "./controllers/logoutUser.controller.js";
 
 // Routers Decleration
 app.use("/api/v1/users", registerUser)

@@ -40,29 +40,29 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // Check in the images (avatar and imageCover), and both images are optional.
-  const avatarLocalPath = await req.files?.avatar;
-  const coverImageLocalPath = await req.files?.coverImage;
+  const avatarLocalPath = req.files?.avatar?.[0]?.path;
+  const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+
+   // Access uploaded files
+  //  const avatarLocalPath = req.files?.avatar?.[0]?.path || null;
+  //  const coverImageLocalPath = req.files?.coverImage?.[0]?.path || null;
 
   // Upload the image to the cloudinary.
-  const avatar = await uploadOnCloudinary(avatarLocalPath); // Upload the avatar image to the cloudinary.
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath); // Upload the coverImage to the cloudinary.
-
-  // If there is any error while uploading, return null.
-  if (!avatar) return "";
-  if (!coverImage) return "";
+  const Avatar = await uploadOnCloudinary(avatarLocalPath); // Upload the avatar image to the cloudinary.
+  const CoverImage = await uploadOnCloudinary(coverImageLocalPath); // Upload the coverImage to the cloudinary.
 
   // Create a new user in the database.
   const user = await User.create({
-    username: username.toLowerCase(),
+    username: username,
     email: email.toLowerCase(),
     fullName,
     password,
-    avatar: avatar?.url || "",
-    coverImage: coverImage?.url || "",
+    avatar: Avatar?.url || "",
+    coverImage: CoverImage?.url || "",
   });
 
   // Checking if the user is created successfully.
-  const createdUser = await User.findById(User._id).select(
+  const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
   ); // Removing the password and refreshToken.
 

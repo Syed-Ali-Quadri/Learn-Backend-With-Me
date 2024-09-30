@@ -8,7 +8,7 @@ import { User } from "../models/user.model.js";
 const generateAccessTokenAndRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
-    const accessToken = await user.generateAccessToken; // This method is already created in the mongodb model file.
+    const accessToken = await user.generateAccessToken(); // This method is already created in the mongodb model file.
     const refreshToken = await user.generateRefreshToken(); // This method is already created in the mongodb model file.
 
     user.refreshToken = refreshToken; // In mongodb model there is an object which we did not save in it, that object key is for this step.
@@ -23,30 +23,22 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 // Login user function
 const loginUser = asyncHandler(async (req, res) => {
   // Extracting the required data from the frontend request.
-  const { username, email, password } = req.body;
+  const { username, password } = req.body;
+
+  // Logging the request body for debugging
+  console.log("Request body:", req.body);
 
   // Checking that inputs are valid.
-  if (!username || !email || !password) {
-    throw new ApiError(400, "Username or email and password is required.");
-  }
-
-  // Checking if the user email is valid.
-  const indexOfAt = email.indexOf("@");
-  const indexOfDot = email.lastIndexOf(".");
-
   if (
-    indexOfAt === -1 ||
-    indexOfDot === -1 ||
-    indexOfAt > indexOfDot ||
-    indexOfAt === 0 ||
-    indexOfDot === email.length - 1 ||
-    indexOfDot - indexOfAt < 2
+    [username, password].some((field) => field?.trim() === "")
   ) {
-    throw new ApiError(400, "Invalid email address.");
+    throw new ApiError(400, "All the fields must be required."); 
   }
 
-  // Checking whether username or email is exist or not.
-  const user = await User.findOne({ $or: [{ email }, { username }] });
+  // Checking whether username is exist or not.
+  const user = await User.findOne({ username });
+
+  console.log(user)
 
   if (!user) throw new ApiError(400, "User not found.");
 
