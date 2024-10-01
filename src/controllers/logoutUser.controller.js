@@ -1,4 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiResponse } from "../utils/ApiResponse.js"
 import { User } from "../models/user.model.js";
 
 // Logout user. This function is wrapped with asyncHandler to handle any potential errors.
@@ -17,7 +18,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     // Clearing cookies.
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "strict",
     }
 
     // Returning response with success message.

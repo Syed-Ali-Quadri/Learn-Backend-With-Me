@@ -26,7 +26,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
   // Logging the request body for debugging
-  console.log("Request body:", req.body);
+  // console.log("Request body:", req.body);
 
   // Checking that inputs are valid.
   if (
@@ -57,7 +57,8 @@ const loginUser = asyncHandler(async (req, res) => {
   // Send a refresh token and access tokens in the cookies section and returning the loginUser data.
   const options = {
     httpOnly: true,
-    secure: true
+    secure: true,
+    sameSite: "strict",
   }
 
   return res

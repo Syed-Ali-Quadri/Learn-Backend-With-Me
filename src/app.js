@@ -25,8 +25,8 @@ app.use(cookieParser());
 
 // Import routes
 import registerUser from "./routes/registerUser.routes.js"
-import { loginUser } from "./controllers/loginUser.controller.js";
-import { logoutUser } from "./controllers/logoutUser.controller.js";
+import loginUser from "./routes/loginUser.routes.js";
+import logoutUser from "./routes/logoutUser.routes.js";
 
 // Routers Decleration
 app.use("/api/v1/users", registerUser)

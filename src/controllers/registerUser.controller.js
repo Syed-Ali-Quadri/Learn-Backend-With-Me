@@ -4,6 +4,17 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { promises as fs } from 'fs'; // Import fs.promises
+
+// Simplified unlink function
+const unlinkFile = async (path) => {
+  if (!path) return; // If the path is undefined or null, just return.
+  try {
+    await fs.unlink(path); // Use fs.promises.unlink to delete the file.
+  } catch (err) {
+    throw new ApiError(500, `Failed to delete file: ${path}`);
+  }
+};
 
 // Register new user. This function is wrapped with asyncHandler to handle any potential errors.
 const registerUser = asyncHandler(async (req, res) => {
@@ -43,13 +54,15 @@ const registerUser = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.files?.avatar?.[0]?.path;
   const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
-   // Access uploaded files
-  //  const avatarLocalPath = req.files?.avatar?.[0]?.path || null;
-  //  const coverImageLocalPath = req.files?.coverImage?.[0]?.path || null;
-
   // Upload the image to the cloudinary.
   const Avatar = await uploadOnCloudinary(avatarLocalPath); // Upload the avatar image to the cloudinary.
   const CoverImage = await uploadOnCloudinary(coverImageLocalPath); // Upload the coverImage to the cloudinary.
+  
+  if (existedUser) {
+  // Delete both photos if they exist.
+  await unlinkFile(avatarLocalPath);
+  await unlinkFile(coverImageLocalPath);
+  }
 
   // Create a new user in the database.
   const user = await User.create({
