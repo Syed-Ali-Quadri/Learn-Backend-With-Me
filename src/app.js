@@ -27,11 +27,13 @@ app.use(cookieParser());
 import registerUser from "./routes/registerUser.routes.js"
 import loginUser from "./routes/loginUser.routes.js";
 import logoutUser from "./routes/logoutUser.routes.js";
+import refreshAccess from "./routes/refreshAccessToken.routes.js";
 
 // Routers Decleration
 app.use("/api/v1/users", registerUser)
 app.use("/api/v1/users", loginUser)
 app.use("/api/v1/users", logoutUser)
+app.use("/api/v1/users", refreshAccess)
 
 
 export { app };

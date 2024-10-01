@@ -15,6 +15,8 @@ const logoutUser = asyncHandler(async (req, res) => {
             new: true
     })
 
+    // console.log(req.user)
+
     // Clearing cookies.
     const options = {
         httpOnly: true,
