@@ -9,7 +9,7 @@ import { User } from "../models/user.model.js";
 
 // 1. Get the data from frontend.
 // 2. check the validation of inputs in various ways: (oldPassword is filled or not and same with newPassword, if newPassword is same as oldPassword)
-// 4. find the user.(We are using "JWTVerify middleware" so that we can access userId)
+// 4. find the user. (We are using "JWTVerify middleware" so that we can access userId)
 // 3. Check the oldPassword if it is correct or not
 // 5. Update the password with newPassword field.
 
@@ -28,11 +28,13 @@ const changeUserPassword = asyncHandler(async (req, res) => {
     // Checking if the password is correct.
     const isPasswordValid = await user.isPasswordCorrect(oldPassword);
 
+    console.log("Old password:", oldPassword);
+    console.log("user:", user);
+    console.log("New password:", newPassword);
+    console.log("Password validation result:", isPasswordValid);
+
     if (!isPasswordValid) throw new ApiError(401, "Incorrect password.");
 
-  console.log("Old password:", oldPassword);
-  console.log("New password:", newPassword);
-  console.log("Password validation result:", isPasswordValid);
 
   if(isPasswordValid){
   user.password = newPassword;

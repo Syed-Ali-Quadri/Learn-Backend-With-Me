@@ -29,6 +29,7 @@ import loginUser from "./routes/loginUser.routes.js";
 import logoutUser from "./routes/logoutUser.routes.js";
 import refreshAccess from "./routes/refreshAccessToken.routes.js";
 import changePassword from "./routes/changePassword.routes.js"
+import changeUserDetails from "./routes/changeUserDetails.routes.js";
 
 // Routers Decleration
 app.use("/api/v1/users", registerUser)
@@ -36,6 +37,7 @@ app.use("/api/v1/users", loginUser)
 app.use("/api/v1/users", logoutUser)
 app.use("/api/v1/users", refreshAccess)
 app.use("/api/v1/users", changePassword)
+app.use("/api/v1/users", changeUserDetails)
 
 
 export { app };
