@@ -52,7 +52,7 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-// Using Middleware: Making password hash
+// Using DataBase Middleware: Making password hash
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next(); // If anything is changed or updated except the password then do nothing...
   this.password = await bcrypt.hash(this.password, 10);
