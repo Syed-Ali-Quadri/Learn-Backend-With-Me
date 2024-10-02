@@ -1,10 +1,10 @@
 import { Router } from "express";
 import verifyJWT from "../middlewares/auth.middleware.js";
-import { logoutUser } from "../controllers/logoutUser.controller.js";
+import { changeUserDetails } from "../controllers/user/changeUserDetails.js";
 
 const routers = Router();
 
 // Secure route.
-routers.route("/logout").post(verifyJWT, logoutUser)
+routers.route("/change-details").post(verifyJWT, changeUserDetails)
 
 export default routers;

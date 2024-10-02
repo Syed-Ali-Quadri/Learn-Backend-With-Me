@@ -26,10 +26,10 @@ app.use(cookieParser());
 // Import routes
 import registerUser from "./routes/registerUser.routes.js"
 import loginUser from "./routes/loginUser.routes.js";
-import logoutUser from "./routes/logoutUser.routes.js";
-import refreshAccess from "./routes/refreshAccessToken.routes.js";
-import changePassword from "./routes/changePassword.routes.js"
-import changeUserDetails from "./routes/changeUserDetails.routes.js";
+import logoutUser from "./routes/secure/logoutUser.routes.js";
+import refreshAccess from "./routes/secure/refreshAccessToken.routes.js";
+import changePassword from "./routes/secure/changePassword.routes.js"
+import changeUserDetails from "./routes/secure/changeUserDetails.routes.js";
 
 // Routers Decleration
 app.use("/api/v1/users", registerUser)

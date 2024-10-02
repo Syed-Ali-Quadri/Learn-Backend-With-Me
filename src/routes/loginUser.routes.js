@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser } from "../controllers/loginUser.controller.js" 
+import { loginUser } from "../controllers/user/loginUser.controller.js" 
 import loginLimit from "../middlewares/limitRate.middleware.js";
 
 const routers = Router();
