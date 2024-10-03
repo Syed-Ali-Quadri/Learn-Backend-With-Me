@@ -1,6 +1,6 @@
 import { asyncHandler } from "../../utils/asyncHandler.js"; // Handles async functions to catch errors.
 import { User } from "../../models/user.model.js"; // User model to interact with the database.
-import { uploadOnCloudinary } from "../../utils/cloudinary.js"; // Utility function to upload images to Cloudinary.
+import { deleteImageOnCloudinary, uploadOnCloudinary } from "../../utils/cloudinary.js"; // Utility function to upload images to Cloudinary.
 import { ApiError } from "../../utils/ApiError.js"; // Custom error handling class.
 import { ApiResponse } from "../../utils/ApiResponse.js"; // Standardized API response format.
 
@@ -27,13 +27,23 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     // 7. Check if the avatar was successfully uploaded to Cloudinary.
     if (!uploadedAvatar) throw new ApiError(401, "Something went wrong while uploading"); // Error if the upload fails.
 
-    // 8. Update the user's avatar URL with the uploaded image's URL from Cloudinary.
+    // 8. Delete the previous cover image from Cloudinary if it exists
+    if (uploadedAvatar && user.avatar) {
+        await deleteImageOnCloudinary(user.avatar); // Pass the public ID of the old image to the delete function
+    }
+
+    // Debugging information
+    // console.log('Old cover image:', user.avatar); // Log the old cover image URL
+    // console.log('Uploaded new cover image:', uploadedAvatar); // Log the new uploaded cover image URL
+
+
+    // 9. Update the user's avatar URL with the uploaded image's URL from Cloudinary.
     user.avatar = uploadedAvatar?.url;
 
-    // 9. Save the updated user object to the database.
+    // 10. Save the updated user object to the database.
     await user.save();
 
-    // 10. Return a success response with the updated user object (including the new avatar URL).
+    // 11. Return a success response with the updated user object (including the new avatar URL).
     return res
         .status(200) // Status code for success.
         .json(new ApiResponse(200, user, "Successfully updated avatar")); // Success response with user data.
