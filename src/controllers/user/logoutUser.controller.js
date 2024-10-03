@@ -1,6 +1,6 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiResponse } from "../utils/ApiResponse.js"
-import { User } from "../models/user.model.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import { ApiResponse } from "../../utils/ApiResponse.js"
+import { User } from "../../models/user.model.js";
 
 // Logout user. This function is wrapped with asyncHandler to handle any potential errors.
 const logoutUser = asyncHandler(async (req, res) => {
