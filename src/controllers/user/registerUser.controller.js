@@ -11,14 +11,17 @@ const registerUser = asyncHandler(async (req, res) => {
   // Getting user information from frontend.
   const { username, email, fullName, password } = req.body;
 
-  setTimeout(() => {
-    fs.unlinkSync(req?.files?.avatar?.[0]?.path)
-  }, 10000)
+  function deleteTemporaryFile() {
+    if(req?.files?.avatar?.[0]?.path) fs.unlinkSync(req?.files?.avatar?.[0]?.path)
+    if(req?.files?.coverImage?.[0]?.path) fs.unlinkSync(req?.files?.coverImage?.[0]?.path)
+  }
+  // setTimeout(() => {
+  //   fs.unlinkSync(req?.files?.avatar?.[0]?.path)
+  // }, 10000)
 
   // Validation if there is empty fields.
-  if (
-    [username, email, fullName, password].some((field) => field?.trim() === "")
-  ) {
+  if (!username || !email || !fullName || !password) {
+    deleteTemporaryFile()
     throw new ApiError(400, "All the fields must be required.");
   }
 
@@ -26,12 +29,14 @@ const registerUser = asyncHandler(async (req, res) => {
   const atIndex = email.indexOf("@");
   
   if (atIndex === -1) {
+    deleteTemporaryFile()
     throw new ApiError(400, "Invalid email.")
   }
   // Checking if the user email is valid.
   const atIndex1 = email.indexOf(".");
 
   if (atIndex1 === -1) {
+    deleteTemporaryFile()
     throw new ApiError(400, "Invalid email.")
   }
 
@@ -41,6 +46,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (existedUser) {
+    deleteTemporaryFile()
     throw new ApiError(404, "Username or email already existed.");
   }
 
@@ -51,13 +57,6 @@ const registerUser = asyncHandler(async (req, res) => {
   // Upload the image to the cloudinary.
   const Avatar = await uploadOnCloudinary(avatarLocalPath); // Upload the avatar image to the cloudinary.
   const CoverImage = await uploadOnCloudinary(coverImageLocalPath); // Upload the coverImage to the cloudinary.
-
-  if(existedUser || atIndex || atIndex1) {
-    setTimeout(() => {
-      fs.unlinkSync(req?.files)
-    }, 1000)
-  }
-
 
   // Create a new user in the database.
   const user = await User.create({
@@ -76,6 +75,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // If the user is not created throw an error.
   if (!createdUser) {
+    deleteTemporaryFile()
     throw new ApiError(500, "Failed to create user.");
   }
 
