@@ -31,11 +31,6 @@ const uploadOnCloudinary = async (localPathFile) => {
     return response;
 
   } catch (error) {
-    // If an error occurs, attempt to delete the local file if it exists
-    if (fs.existsSync(localPathFile)) {
-      fs.unlinkSync(localPathFile); // Delete the locally saved temporary file if it exists
-    }
-
     // Log the error for debugging purposes
     throw new ApiError(401, "Cloudinary upload failed: " + error);
   }
