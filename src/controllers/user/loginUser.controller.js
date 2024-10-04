@@ -1,79 +1,81 @@
 // Imports the modules.
-import { asyncHandler } from "../../utils/asyncHandler.js";
-import { ApiError } from "../../utils/ApiError.js";
-import { ApiResponse } from "../../utils/ApiResponse.js";
-import { User } from "../../models/user.model.js";
+import { asyncHandler } from "../../utils/asyncHandler.js"; // Utility to handle async functions and catch errors
+import { ApiError } from "../../utils/ApiError.js"; // Custom error handling class
+import { ApiResponse } from "../../utils/ApiResponse.js"; // Standardized API response structure
+import { User } from "../../models/user.model.js"; // Importing the User model to interact with the database
 
-// Generating the access token and refresh token.
+// Helper function: Generate access and refresh tokens
+// This function generates both tokens for the user and saves the refresh token to the database.
 const generateAccessTokenAndRefreshToken = async (userId) => {
   try {
+    // 1. Find the user by their ID.
     const user = await User.findById(userId);
-    const accessToken = await user.generateAccessToken(); // This method is already created in the mongodb model file.
-    const refreshToken = await user.generateRefreshToken(); // This method is already created in the mongodb model file.
 
-    user.refreshToken = refreshToken; // In mongodb model there is an object which we did not save in it, that object key is for this step.
-    await user.save({ validateBeforeSave: false }); // At the time of saving files it requires validation before saving, simply we are not validating.
+    // 2. Generate access and refresh tokens using methods defined in the User model.
+    const accessToken = await user.generateAccessToken(); // Method to generate access token
+    const refreshToken = await user.generateRefreshToken(); // Method to generate refresh token
 
-    return { accessToken, refreshToken }; // returning access and refresh token.
+    // 3. Save the refresh token to the user's database entry.
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false }); // Skip validation before saving
+
+    // 4. Return both tokens.
+    return { accessToken, refreshToken };
   } catch (error) {
+    // 5. Handle errors if token generation fails.
     throw new ApiError(500, "Error generating access token or refresh token.");
   }
 };
 
-// Login user function
+// FEATURE: User login
+// This function handles user login, verifying the username and password, and generating tokens.
 const loginUser = asyncHandler(async (req, res) => {
-  // Extracting the required data from the frontend request.
+  // 1. Extract username and password from the request body.
   const { username, password } = req.body;
 
-  // Logging the request body for debugging
-  // console.log("Request body:", req.body);
-
-  // Checking that inputs are valid.
-  if (
-    [username, password].some((field) => field?.trim() === "")
-  ) {
-    throw new ApiError(400, "All the fields must be required."); 
+  // 2. Validate that both username and password are provided.
+  if ([username, password].some((field) => field?.trim() === "")) {
+    throw new ApiError(400, "All the fields must be required."); // Return an error if any field is missing.
   }
 
-  // Checking whether username is exist or not.
+  // 3. Check if a user exists with the given username.
   const user = await User.findOne({ username });
 
-  console.log(user)
-
+  // 4. If the user does not exist, return an error.
   if (!user) throw new ApiError(400, "User not found.");
 
-  // Checking if the password is correct.
+  // 5. Validate the provided password.
   const isPasswordValid = await user.isPasswordCorrect(password);
 
+  // 6. If the password is incorrect, return an error.
   if (!isPasswordValid) throw new ApiError(401, "Incorrect password.");
 
-  // Access token and refresh token generation.
+  // 7. Generate access and refresh tokens using the helper function.
   const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
 
+  // 8. Find the logged-in user, excluding password and refreshToken fields.
+  const loggedIn = await User.findOne(user._id).select("-password -refreshToken");
 
-  // Checking if the user is loggedIn successfully.
-  const loggedIn = await User.findOne( User._id ).select("-password -refreshToken");
-
-  // Send a refresh token and access tokens in the cookies section and returning the loginUser data.
+  // 9. Set cookie options for storing tokens.
   const options = {
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-  }
+    httpOnly: true, // Prevents access from JavaScript
+    secure: true, // Only transmit over HTTPS
+    sameSite: "strict", // Protects against CSRF attacks
+  };
 
+  // 10. Send a response with tokens in cookies and user data in the response body.
   return res
-  .status(200)
-  .cookie("refreshToken", refreshToken, options) // saving the refresh token in cookies section.
-  .cookie("accessToken", accessToken, options) // saving the access token in cookies section.
-  .json(new ApiResponse(200, {
-    user: loggedIn, accessToken, refreshToken
-  }, "User successfully logged in.")); // returning the loginUser data.
+    .status(200) // Success status code
+    .cookie("refreshToken", refreshToken, options) // Store refresh token in a cookie
+    .cookie("accessToken", accessToken, options) // Store access token in a cookie
+    .json(new ApiResponse(200, { user: loggedIn, accessToken, refreshToken }, "User successfully logged in.")); // Success response
 });
 
 // Exporting the loginUser function
 export { loginUser };
 
 /*
+Alternative implementation without asyncHandler:
 const loginUser = async (req, res, next) => {
     try {
         // Your async logic...

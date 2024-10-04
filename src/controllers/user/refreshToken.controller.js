@@ -1,92 +1,98 @@
-// Imports the modules.
-import { asyncHandler } from "../../utils/asyncHandler.js";
-import { ApiError } from "../../utils/ApiError.js";
-import { ApiResponse } from "../../utils/ApiResponse.js";
-import { User } from "../../models/user.model.js";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+// Imports the necessary modules.
+import { asyncHandler } from "../../utils/asyncHandler.js"; // Utility to handle async functions and catch errors.
+import { ApiError } from "../../utils/ApiError.js"; // Custom error handling class.
+import { ApiResponse } from "../../utils/ApiResponse.js"; // Standardized API response structure.
+import { User } from "../../models/user.model.js"; // Importing the User model to interact with the database.
+import jwt from "jsonwebtoken"; // Importing jsonwebtoken for signing and verifying tokens.
+import dotenv from "dotenv"; // Importing dotenv to load environment variables from a .env file.
 
-// Importing dotenv module to load environment variables from a.env file.
+// Loading environment variables from the .env file.
 dotenv.config({ path: "./.env" });
 
+// FEATURE: Function to generate new access and refresh tokens.
 const generateTokens = async (userId) => {
   try {
+    // 1. Fetch the user by their user ID.
     const user = await User.findById(userId);
 
-    // Generating access token and refresh token.
-    const accessToken = await user.generateAccessToken();
-    const refreshToken = await user.generateRefreshToken();
+    // 2. Generate new access and refresh tokens using methods defined in the User model.
+    const accessToken = await user.generateAccessToken(); // Generate access token.
+    const refreshToken = await user.generateRefreshToken(); // Generate refresh token.
 
+    // 3. Set the new refresh token in the user's document in the database.
     user.refreshToken = refreshToken;
 
-    // Saving the user with the updated refresh token.
+    // 4. Save the user with the updated refresh token, without validating other fields.
     await user.save({ validateBeforeSave: false });
 
-    // returning the user with the updated refresh token and access token.
+    // 5. Return both the access and refresh tokens.
     return { accessToken, refreshToken };
   } catch (error) {
+    // 6. Handle any errors that may occur during token generation.
     throw new ApiError(500, "Error generating access token or refresh token.");
   }
 };
 
-// refreshing the token if the verification is successful.
+// FEATURE: Refresh the access token if the refresh token is valid.
 const refreshAccessToken = asyncHandler(async (req, res) => {
-  // Getting the refresh token from the cookie.
+  // 1. Get the refresh token from the cookies.
   const incomingRefreshToken = req.cookies.refreshToken;
 
-  // If refresh token is not provided, return error.
+  // 2. If no refresh token is provided, return an unauthorized access error.
   if (!incomingRefreshToken) {
-    throw new ApiError(401, "unauthorization access.");
+    throw new ApiError(401, "Unauthorized access.");
   }
 
   try {
-    // Verifying the refresh token with the secret key.
+    // 3. Verify the refresh token using the secret key from environment variables.
     const decodedRefreshToken = jwt.verify(
       incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
 
-    // Find user by refresh token.
+    // 4. Find the user associated with the refresh token.
     const user = await User.findById(decodedRefreshToken._id);
 
-    // Check if user is authenticated
+    // 5. If the user is not found, return an error.
     if (!user) {
       throw new ApiError(401, "User not found.");
     }
 
-    // Verifing the incoming refresh token with the refresh token in the database
+    // 6. Compare the incoming refresh token with the one stored in the database.
     if (user?.refreshToken !== incomingRefreshToken) {
       throw new ApiError(401, "Refresh token is expired or used.");
     }
 
-    // initialize the cookie.
+    // 7. Define the options for cookies (httpOnly, secure, and sameSite).
     const options = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      httpOnly: true, // Cookie is accessible only by the web server.
+      secure: true, // Cookie is sent over HTTPS only.
+      sameSite: "strict", // Prevents CSRF by ensuring the cookie is only sent with same-site requests.
     };
 
-    const { accessToken, newRefreshToken } = await generateTokens(user._id);
+    // 8. Generate new access and refresh tokens for the user.
+    const { accessToken, refreshToken: newRefreshToken } = await generateTokens(user._id);
 
-    // returning the loginUser data.
+    // 9. Return the new tokens, saving them in the cookies.
     return res
-      .status(200)
-      .cookie("refreshToken", newRefreshToken, options) // saving the refresh token in cookies section.
-      .cookie("accessToken", accessToken, options) // saving the access token in cookies section.
+      .status(200) // Success status code.
+      .cookie("refreshToken", newRefreshToken, options) // Set the new refresh token in the cookies.
+      .cookie("accessToken", accessToken, options) // Set the new access token in the cookies.
       .json(
         new ApiResponse(
           200,
           {
-            accessToken,
-            newRefreshToken,
+            accessToken, // Send the new access token.
+            newRefreshToken, // Send the new refresh token.
           },
-          "Access token refreshed."
+          "Access token refreshed." // Success message.
         )
-      ); 
+      );
   } catch (error) {
+    // 10. If the token is invalid, return an error.
     throw new ApiError(401, "Invalid refresh token");
   }
 });
 
-// Exporting the refreshAccessToken function.
+// Exporting the refreshAccessToken function for external usage.
 export { refreshAccessToken };
