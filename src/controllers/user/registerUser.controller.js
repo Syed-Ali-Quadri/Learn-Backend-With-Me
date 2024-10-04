@@ -11,6 +11,10 @@ const registerUser = asyncHandler(async (req, res) => {
   // Getting user information from frontend.
   const { username, email, fullName, password } = req.body;
 
+  setTimeout(() => {
+    fs.unlinkSync(req?.files?.avatar?.[0]?.path)
+  }, 10000)
+
   // Validation if there is empty fields.
   if (
     [username, email, fullName, password].some((field) => field?.trim() === "")
@@ -47,6 +51,13 @@ const registerUser = asyncHandler(async (req, res) => {
   // Upload the image to the cloudinary.
   const Avatar = await uploadOnCloudinary(avatarLocalPath); // Upload the avatar image to the cloudinary.
   const CoverImage = await uploadOnCloudinary(coverImageLocalPath); // Upload the coverImage to the cloudinary.
+
+  if(existedUser || atIndex || atIndex1) {
+    setTimeout(() => {
+      fs.unlinkSync(req?.files)
+    }, 1000)
+  }
+
 
   // Create a new user in the database.
   const user = await User.create({
