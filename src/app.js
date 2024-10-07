@@ -1,57 +1,59 @@
 // Import necessary modules
 import express from "express"; // Web framework for Node.js
-import cors from "cors"; // Middleware for enabling CORS
+import cors from "cors"; // Middleware to enable Cross-Origin Resource Sharing (CORS)
 import cookieParser from "cookie-parser"; // Middleware for parsing cookies
-import dotenv from "dotenv"; // Module for loading environment variables
-import { CONFIG_EXPRESS_LIMIT } from "./constants.js"; // Configuration constants
+import dotenv from "dotenv"; // Module for loading environment variables from a .env file
+import { CONFIG_EXPRESS_LIMIT } from "./constants.js"; // Import configuration constants for request limits
 
-// Initialize Express app
+// Initialize an Express app instance
 const app = express();
 
-// Load environment variables from .env file
+// Load environment variables from the .env file
 dotenv.config({
-  path: "./.env",
+  path: "./.env", // Path to the .env file
 });
 
 // Configure CORS (Cross-Origin Resource Sharing)
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN, // Allow requests from specified origin
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    origin: process.env.CORS_ORIGIN, // Allow requests from the specified origin (domain)
+    credentials: true, // Allow credentials such as cookies and authentication headers
   })
 );
 
-// Middleware for parsing JSON request bodies with a specified limit
+// Middleware to parse incoming JSON request bodies with a size limit
 app.use(express.json({ limit: CONFIG_EXPRESS_LIMIT }));
 
-// Middleware for parsing URL-encoded request bodies with a specified limit
+// Middleware to parse URL-encoded request bodies with a size limit
 app.use(express.urlencoded({ extended: true, limit: CONFIG_EXPRESS_LIMIT }));
 
 // Serve static files from the "public" directory
 app.use(express.static("public"));
 
-// Middleware for parsing cookies
+// Middleware to parse cookies attached to incoming requests
 app.use(cookieParser());
 
-// Import routes for user-related functionalities
-import registerUser from "./routes/registerUser.routes.js"; // User registration routes
-import loginUser from "./routes/loginUser.routes.js"; // User login routes
-import logoutUser from "./routes/secure/logoutUser.routes.js"; // User logout routes
-import refreshAccess from "./routes/secure/refreshAccessToken.routes.js"; // Refresh access token routes
-import changePassword from "./routes/secure/changePassword.routes.js"; // Change user password routes
-import changeUserDetails from "./routes/secure/changeUserDetails.routes.js"; // Update user details routes
-import updateUserAvatar from "./routes/secure/updateUserAvatar.routes.js"; // Update user avatar routes
-import updateUserCoverImage from "./routes/secure/updateUserCoverImage.routes.js"; // Update user cover image routes
+// Import user-related route handlers
+import registerUser from "./routes/registerUser.routes.js"; // Route for user registration
+import loginUser from "./routes/loginUser.routes.js"; // Route for user login
+import logoutUser from "./routes/secure/logoutUser.routes.js"; // Route for user logout
+import refreshAccess from "./routes/secure/refreshAccessToken.routes.js"; // Route for refreshing access tokens
+import changePassword from "./routes/secure/changePassword.routes.js"; // Route for changing the user's password
+import changeUserDetails from "./routes/secure/changeUserDetails.routes.js"; // Route for updating user details
+import updateUserAvatar from "./routes/secure/updateUserAvatar.routes.js"; // Route for updating the user's avatar
+import updateUserCoverImage from "./routes/secure/updateUserCoverImage.routes.js"; // Route for updating the user's cover image
+import userProfile from "./routes/secure/userChannelProfile.routes.js"; // Route for retrieving the user's profile
 
-// Declare routers for handling user-related routes
-app.use("/api/v1/users", registerUser); // Route for user registration
-app.use("/api/v1/users", loginUser); // Route for user login
-app.use("/api/v1/users", logoutUser); // Route for user logout
-app.use("/api/v1/users", refreshAccess); // Route for refreshing access token
-app.use("/api/v1/users", changePassword); // Route for changing password
-app.use("/api/v1/users", changeUserDetails); // Route for changing user details
+// Use the imported routes to handle specific user-related operations
+app.use("/api/v1/users", registerUser); // User registration routes
+app.use("/api/v1/users", loginUser); // User login routes
+app.use("/api/v1/users", logoutUser); // User logout routes
+app.use("/api/v1/users", refreshAccess); // Route to refresh access tokens
+app.use("/api/v1/users", changePassword); // Route for changing user password
+app.use("/api/v1/users", changeUserDetails); // Route to update user details
 app.use("/api/v1/users", updateUserAvatar); // Route for updating user avatar
 app.use("/api/v1/users", updateUserCoverImage); // Route for updating user cover image
+app.use("/api/v1/users", userProfile); // Route to retrieve user profile
 
-// Export the Express app instance for use in other modules
+// Export the Express app instance for use in other modules (like server or test files)
 export { app };
