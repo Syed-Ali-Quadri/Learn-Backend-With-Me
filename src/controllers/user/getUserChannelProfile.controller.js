@@ -41,7 +41,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         channelsSubscribedToCount: { $size: "$subscribedTo" }, // Count channels the user is subscribed to
         isSubscribed: {
           $cond: {
-            if: { $in: [req.user?._id, "$subscribes.subscribe"] }, // Check if the current user is subscribed
+            if: { $in: [req.user?._id, "$subscribers.subscribe"] }, // Check if the current user is subscribed
             then: true,
             else: false,
           },
@@ -67,8 +67,12 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     throw new ApiError(404, "channel does not exist.");
   }
 
+
+  // Log the user details for debugging (optional)
+  console.log("User details: ", req.user._id)
+
   // Log the channel details for debugging (optional)
-  console.log(channel);
+  console.log("Channel variable details: ",channel);
 
   // Return a successful response with the channel data
   return res
