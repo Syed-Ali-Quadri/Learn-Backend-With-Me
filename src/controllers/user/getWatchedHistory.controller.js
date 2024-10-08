@@ -1,0 +1,5 @@
+const getWatchedHistory = () => {
+
+}
+
+export { getWatchedHistory }
