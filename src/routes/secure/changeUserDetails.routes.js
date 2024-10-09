@@ -5,6 +5,6 @@ import { changeUserDetails } from "../../controllers/user/changeUserDetails.cont
 const routers = Router();
 
 // Secure route.
-routers.route("/change-details").post(verifyJWT, changeUserDetails)
+routers.route("/change-details").patch(verifyJWT, changeUserDetails)
 
 export default routers;

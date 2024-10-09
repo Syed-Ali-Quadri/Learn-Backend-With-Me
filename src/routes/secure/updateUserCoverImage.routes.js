@@ -6,6 +6,6 @@ import { updateUserCoverImage } from "../../controllers/user/updateUserCoverImag
 const routers = Router();
 
 // Secure route for uploading a single cover image.
-routers.route("/change-coverImage").post(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
+routers.route("/change-coverImage").patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
 export default routers;

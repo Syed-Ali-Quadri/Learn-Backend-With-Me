@@ -6,6 +6,6 @@ import { updateUserAvatar } from "../../controllers/user/updateUserAvatar.contro
 const routers = Router();
 
 // Secure route for uploading a single avatar image.
-routers.route("/change-avatar").post(verifyJWT, upload.single("avatar"), updateUserAvatar);
+routers.route("/change-avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
 
 export default routers;
