@@ -14,4 +14,4 @@ const tweetSchema = new Schema({
 
 mongoose.plugin(mongooseAggregatePaginate);
 
-module.exports = mongoose.model("Tweet", tweetSchema)
+export const Tweet = mongoose.model("Tweet", tweetSchema)

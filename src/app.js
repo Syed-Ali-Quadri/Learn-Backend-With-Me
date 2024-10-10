@@ -44,6 +44,7 @@ import updateUserAvatar from "./routes/secure/updateUserAvatar.routes.js"; // Ro
 import updateUserCoverImage from "./routes/secure/updateUserCoverImage.routes.js"; // Route for updating the user's cover image
 import userProfile from "./routes/secure/userChannelProfile.routes.js"; // Route for retrieving the user's profile
 import getHistory from "./routes/secure/getWatchHistory.routes.js"; // Route for retrieving the user's Watch History
+import createTweet from "./routes/secure/createTweet.routes.js"; // Route for retrieving the user's Watch History
 
 // Use the imported routes to handle specific user-related operations
 app.use("/api/v1/users", registerUser); // User registration routes
@@ -56,6 +57,7 @@ app.use("/api/v1/users", updateUserAvatar); // Route for updating user avatar
 app.use("/api/v1/users", updateUserCoverImage); // Route for updating user cover image
 app.use("/api/v1/users", userProfile); // Route to retrieve user profile
 app.use("/api/v1/users", getHistory); // Route to retrieve user Watched History
+app.use("/api/v1/tweets", createTweet);
 
 // Export the Express app instance for use in other modules (like server or test files)
 export { app };
