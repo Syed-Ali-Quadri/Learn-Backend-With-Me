@@ -10,7 +10,7 @@ const routers = Router();
 // This route listens for POST requests at the URL "/channels/:username"
 // The 'verifyJWT' middleware is applied first to check if the user is authenticated
 // If authenticated, the 'getUserChannelProfile' controller handles the request
-routers.route("/channels/:username").post(verifyJWT, getUserChannelProfile);
+routers.route("/channels/:username").get(verifyJWT, getUserChannelProfile);
 
 // Export the routers so they can be used in other modules
 export default routers;

@@ -5,6 +5,6 @@ import { getUserWatchedHistory } from "../../controllers/user/getWatchedHistory.
 const routers = Router();
 
 // Secure route.
-routers.route("/watch-history").post(verifyJWT, getUserWatchedHistory)
+routers.route("/watch-history").get(verifyJWT, getUserWatchedHistory)
 
 export default routers;
