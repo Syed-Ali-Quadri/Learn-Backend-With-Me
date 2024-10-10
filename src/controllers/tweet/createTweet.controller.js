@@ -70,7 +70,7 @@ const createTweet = asyncHandler(async (req, res) => {
   }
 
   // Step 12: Log the tweet aggregate result for debugging
-  console.log("Tweet Aggregate: ", tweetAggregate);
+  console.log("Tweet Aggregate (username): ", tweetAggregate[0].ownerDetails.username);
 
   // Step 13: Log the new tweet for debugging
   console.log("New Tweet: ", newTweet);
