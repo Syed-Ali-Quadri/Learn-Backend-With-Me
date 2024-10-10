@@ -47,6 +47,7 @@ import getHistory from "./routes/secure/getWatchHistory.routes.js"; // Route for
 import createTweet from "./routes/secure/createTweet.routes.js"; // Route for retrieving the user's Watch History
 import deleteTweet from "./routes/secure/deleteTweet.routes.js"; // Route for retrieving the user's Watch History
 import editTweet from "./routes/secure/editedTweet.routes.js"; // Route for retrieving the user's Watch History
+import getAllTweets from "./routes/secure/getTweets.routes.js"; // Route for retrieving the user's Watch History
 
 // Use the imported routes to handle specific user-related operations
 app.use("/api/v1/users", registerUser); // User registration routes
@@ -62,6 +63,7 @@ app.use("/api/v1/users", getHistory); // Route to retrieve user Watched History
 app.use("/api/v1/tweets", createTweet);
 app.use("/api/v1/tweets", deleteTweet);
 app.use("/api/v1/tweets", editTweet);
+app.use("/api/v1/tweets", getAllTweets);
 
 // Export the Express app instance for use in other modules (like server or test files)
 export { app };

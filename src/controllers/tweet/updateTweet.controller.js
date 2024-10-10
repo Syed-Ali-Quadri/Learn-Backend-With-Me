@@ -29,11 +29,11 @@ const updateTweet = asyncHandler(async (req, res) => {
 
     // Step 7: If tweet was not edited (tweet not found), return an error response
     if (!editedTweet) {
-        return new ApiError(401, "Failed to edit tweet."); // Error if the tweet couldn't be found/edited.
+        throw new ApiError(401, "Failed to edit tweet."); // Error if the tweet couldn't be found/edited.
     }
 
     // Step 8: If the tweet is successfully edited, send a success response with the edited tweet data
-    res
+    return res
         .status(200)
         .json(new ApiResponse(200, "Tweet edited successfully.", editedTweet));
 });

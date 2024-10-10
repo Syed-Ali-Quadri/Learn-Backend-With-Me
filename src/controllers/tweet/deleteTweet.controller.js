@@ -17,7 +17,7 @@ const deleteTweet = asyncHandler(async (req, res) => {
     const deletedTweet = await Tweet.findByIdAndDelete(tweetId);
 
     // 4. Return a success response with the deleted tweet data.
-    res.status(200).json(new ApiResponse(200, "Tweet deleted successfully", deletedTweet));
+    return res.status(200).json(new ApiResponse(200, "Tweet deleted successfully", deletedTweet));
 })
 
 export { deleteTweet }

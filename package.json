@@ -22,6 +22,7 @@
     "prettier": "^3.3.3"
   },
   "dependencies": {
+    "bad-words": "^4.0.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.0",
     "cookie-parser": "^1.4.6",
