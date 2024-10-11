@@ -1,13 +1,15 @@
+// Custom API response class to standardize responses
 class ApiResponse {
-    constructor(statusCode, data, message = "Success"){
-        this.statusCode = statusCode
-        this.data = data
-        this.message = message
-        this.success = statusCode < 400
-    }
+  constructor(statusCode, data, message = "Success") {
+      this.statusCode = statusCode; // HTTP status code to indicate the response type (e.g., 200 for success)
+      this.data = data; // The actual data to return (e.g., user information, list of items)
+      this.message = message; // A message explaining the result (defaults to "Success" if not provided)
+      this.success = statusCode < 400; // Boolean indicating if the request was successful (true for status codes less than 400)
+  }
 }
 
-export { ApiResponse }
+export { ApiResponse };
+
 
 
 // Here is the example and output (If the response went success, and statusCode is below 400).

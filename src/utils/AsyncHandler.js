@@ -20,10 +20,19 @@ export { asyncHandler };
 */
 
 // 2) Promise method:
-const asyncHandler = (requesthandler) => {
-  return (req, res, next) => {
-    Promise.resolve(requesthandler(req, res, next)).catch((err) => next(err));
-  };
-};
 
-export { asyncHandler };
+// Define an asyncHandler function that takes a request handler as an argument
+const asyncHandler = (requesthandler) => {
+    // Return a new function that accepts req (request), res (response), and next (for middleware)
+    return (req, res, next) => {
+      // Promise.resolve ensures that the requestHandler is executed as a promise.
+      // If the handler resolves successfully, it continues as normal.
+      // If an error occurs, it is caught by .catch and passed to the next() function, 
+      // which passes it to any error-handling middleware.
+      Promise.resolve(requesthandler(req, res, next)).catch((err) => next(err));
+    };
+  };
+  
+  // Export the asyncHandler function so it can be used in other modules
+  export { asyncHandler };
+  

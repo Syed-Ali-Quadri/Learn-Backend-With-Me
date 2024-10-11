@@ -1,19 +1,24 @@
+// Custom error class that extends the built-in Error class
 class ApiError extends Error {
   constructor(
-    statusCode,
-    message = "Something went wrong.",
-    error = [],
-    stack = ""
+    statusCode, // HTTP status code to represent the type of error (e.g., 401, 500)
+    message = "Something went wrong.", // Default message, can be overridden
+    error = [], // An array of additional error details (optional)
+    stack = "" // Stack trace to track where the error occurred (optional)
   ) {
-    super(message);
-    this.statusCode = statusCode;
-    this.message = message;
-    this.data = null;
-    this.success = false;
-    this.error = error;
+    super(message); // Call the parent Error constructor with the message
+    this.statusCode = statusCode; // Store the provided status code
+    this.message = message; // Store the error message
+    this.data = null; // No data is returned in case of an error
+    this.success = false; // Success is set to false as it's an error
+    this.error = error; // Additional error details (if provided)
+    
+    // Stack trace helps identify where the error occurred
+    // If a stack trace is provided, use it; otherwise, generate one
     if (stack) {
       this.stack = stack;
     } else {
+      // Capture the stack trace specific to this error instance
       Error.captureStackTrace(this, this.constructor);
     }
   }
